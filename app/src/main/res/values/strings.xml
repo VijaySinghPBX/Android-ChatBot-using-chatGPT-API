@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Chat Bot</string>
+    <string name="edit_text_hint">Send a message...</string>
+</resources>

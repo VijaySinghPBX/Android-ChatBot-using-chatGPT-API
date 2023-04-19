@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginStart="8dp">
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="#eef1f6"
+        app:cardCornerRadius="12dp">
+        <TextView
+            android:id="@+id/tv_bot_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="280dp"
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:hint="Hey My name is vijay singh and i'm from sirsa haryana that is in haryana state f ndia"/>
+    </androidx.cardview.widget.CardView>
+</LinearLayout>
