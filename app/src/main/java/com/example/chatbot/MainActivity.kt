@@ -76,24 +76,9 @@ class MainActivity : AppCompatActivity() {
             override fun getHeaders(): MutableMap<String, String> {
                 val params = HashMap<String, String>()
                 params["Content-Type"] = "application/json"
-                params["Authorization"] = "Bearer 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"
+                params["Authorization"] = "Bearer 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"
                 return params
             }
-        }
-        postRequest.retryPolicy = object:RetryPolicy{
-            override fun getCurrentTimeout(): Int {
-                return 50000
-            }
-
-            override fun getCurrentRetryCount(): Int {
-                return 50000
-            }
-
-            override fun retry(error: VolleyError?) {
-
-            }
-
-
         }
         queue.add(postRequest)
     }
