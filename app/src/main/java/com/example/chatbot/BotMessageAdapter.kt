@@ -18,11 +18,11 @@ class BotMessageAdapter(private val messageList:List<ChatModel>): RecyclerView.A
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view:View
         return if (viewType == 0){
-            view = LayoutInflater.from(parent.context).inflate(R.layout.user_chat_item_layou,parent,false)
-            return UserViewHolder(view)
-        }else{
             view = LayoutInflater.from(parent.context).inflate(R.layout.bot_chat_layout,parent,false)
-            return UserViewHolder(view)
+            BotViewHolder(view)
+        }else{
+            view = LayoutInflater.from(parent.context).inflate(R.layout.user_chat_item_layou,parent,false)
+            UserViewHolder(view)
         }
     }
 
@@ -31,10 +31,9 @@ class BotMessageAdapter(private val messageList:List<ChatModel>): RecyclerView.A
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val sender = messageList.get(position).sender
-        when(sender){
-            "user"-> (holder as UserViewHolder).userTv.setText(messageList[position].message)
-            "bot"-> (holder as BotViewHolder).botTv.setText(messageList[position].message)
+        when(messageList[position].sender){
+            "user"-> (holder as UserViewHolder).userTv.text = messageList[position].message
+            "bot"-> (holder as BotViewHolder).botTv.text = messageList[position].message
         }
     }
 

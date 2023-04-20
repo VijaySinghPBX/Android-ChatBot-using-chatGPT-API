@@ -1,14 +1,19 @@
 package com.example.chatbot
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
+import android.widget.TextView
+import android.widget.TextView.OnEditorActionListener
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
-import com.android.volley.Response
+import com.android.volley.RetryPolicy
+import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.google.android.material.textfield.TextInputEditText
@@ -19,8 +24,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var inputEditText: TextInputEditText
     private lateinit var mAdapter: BotMessageAdapter
     private lateinit var messageList: ArrayList<ChatModel>
-    val apiKey = "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"
     private var url = "https://api.openai.com/v1/completions"
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,25 +35,25 @@ class MainActivity : AppCompatActivity() {
         mAdapter = BotMessageAdapter(messageList)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = mAdapter
-        inputEditText.setOnEditorActionListener { textView, i, keyEvent ->
-            if (i == EditorInfo.IME_ACTION_SEND) {
-                if (inputEditText.toString().length > 0) {
-                    messageList.add(ChatModel(inputEditText.text.toString(), "user"))
+        inputEditText.setOnEditorActionListener(TextView.OnEditorActionListener { textView, i, keyEvent ->
+            if (i == EditorInfo.IME_ACTION_SEND){
+                var message = inputEditText.text.toString()
+                if (message.isNotBlank()){
+                    messageList.add(ChatModel(message,"user"))
                     mAdapter.notifyDataSetChanged()
-                    getResponse()
-                } else {
-                    Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
+                    getResponse(message)
+                    inputEditText.setText("")
                 }
-                return@setOnEditorActionListener true
+                return@OnEditorActionListener true
             }
             false
-        }
+        })
     }
 
     private fun getResponse(query: String) {
         inputEditText.setText("")
         val queue = Volley.newRequestQueue(this)
-        val jsonObject = JSONObject()
+        val jsonObject: JSONObject = JSONObject()
         jsonObject.put("model", "text-davinci-003")
         jsonObject.put("prompt", query)
         jsonObject.put("temperature", 0)
@@ -56,14 +61,41 @@ class MainActivity : AppCompatActivity() {
         jsonObject.put("top_p", 1)
         jsonObject.put("frequency_penalty", 0.0)
         jsonObject.put("presence_penalty", 0.0)
+        val postRequest = object: JsonObjectRequest(
+            Request.Method.POST,
+            url,
+            jsonObject,
+            { respone ->
+                val messageRes = respone.getJSONArray("choices").getJSONObject(0).getString("text")
+                messageList.add(ChatModel(messageRes, "bot"))
+                mAdapter.notifyDataSetChanged()
+            },
+            {
+                Log.e("error", "some error occurred")
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["Content-Type"] = "application/json"
+                params["Authorization"] = "Bearer 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"
+                return params
+            }
+        }
+        postRequest.retryPolicy = object:RetryPolicy{
+            override fun getCurrentTimeout(): Int {
+                return 50000
+            }
 
-        val postRequest = JsonObjectRequest(Request.Method.POST,url,jsonObject,Response.Listener { response ->
-            val respMsg = response.getJSONArray("choices").getJSONObject(0).getString("text")
-            messageList.add(ChatModel(respMsg,"bot"))
-        },{
+            override fun getCurrentRetryCount(): Int {
+                return 50000
+            }
 
-        })
+            override fun retry(error: VolleyError?) {
+
+            }
 
 
+        }
+        queue.add(postRequest)
     }
+
 }

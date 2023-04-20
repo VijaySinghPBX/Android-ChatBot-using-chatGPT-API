@@ -6,11 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-   <androidx.recyclerview.widget.RecyclerView
-       android:id="@+id/chat_rv"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:layout_above="@id/text_input_layout"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/text_input_layout" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_input_layout"
         android:layout_width="match_parent"
@@ -25,9 +26,14 @@
             android:layout_height="wrap_content"
             android:drawableEnd="@drawable/ic_send"
             android:hint="@string/edit_text_hint"
+            android:inputType="text"
+            android:importantForAutofill="no"
+            android:imeOptions="actionSend"
             android:textColorHint="@color/black"
             android:textSize="14sp"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:ems="10"
+           />
     </com.google.android.material.textfield.TextInputLayout>
 
 
